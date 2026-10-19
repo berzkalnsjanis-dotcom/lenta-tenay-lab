@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Алента Тинай — Suno мастер 2.0 (тест)</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,sans-serif;background:#121a2b;color:#f8f1e5}body{max-width:850px;margin:auto;padding:20px}h1{color:#efd5a1}section{background:#202f47;border:1px solid #536781;border-radius:14px;padding:20px}label{display:block;margin:15px 0 6px}select,input,textarea,button{font:inherit;box-sizing:border-box;border-radius:8px;padding:11px;background:#101d30;color:white;border:1px solid #8293ac;width:100%}button{background:#127e84;cursor:pointer;font-weight:700;margin-top:12px}textarea{height:190px;resize:vertical}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:0 16px}.note{color:#d1c2a7}#warning{color:#ffd88a;min-height:25px}small{color:#b8c8d7}a{color:#9ddedb}
+</style></head><body><h1>Алента Тинай · Мастер Suno 2.0</h1><p class="note">Отдельная тестовая страница. Основная лаборатория не изменена. Промпты — рекомендации, не гарантия результата Suno.</p>
+<section><div class="grid"><div><label for="genre">Основной жанр</label><select id="genre"><option value="Pop ballad">Поп-баллада</option><option value="Pop rock">Поп-рок</option><option value="Eurodisco">Eurodisco</option><option value="Dance pop">Dance Pop</option><option value="Chanson">Шансон</option><option value="Synth pop">Synth Pop</option><option value="Deep house">Deep House</option><option value="Jersey club">Jersey Club</option><option value="Cinematic pop">Кинематографичный поп</option><option value="Acoustic folk">Акустический фолк</option></select></div>
+<div><label for="fusion">Дополнительный стиль</label><select id="fusion"><option value="">Без дополнительного</option><option value="Pop ballad">Поп-баллада</option><option value="Pop rock">Поп-рок</option><option value="Eurodisco">Eurodisco</option><option value="Dance pop">Dance Pop</option><option value="Chanson">Шансон</option><option value="Synth pop">Synth Pop</option><option value="Deep house">Deep House</option><option value="Jersey club">Jersey Club</option><option value="Cinematic pop">Кинематографичный поп</option><option value="Acoustic folk">Акустический фолк</option></select></div>
+<div><label for="inst">Инструменты</label><select id="inst"><option value="expressive piano, warm strings">Фортепиано и струнные</option><option value="acoustic guitar, subtle percussion">Акустическая гитара</option><option value="analog synthesizers, deep bass">Синтезаторы и бас</option><option value="punchy club kick, syncopated bass">Клубный ритм и бас</option><option value="electric guitar, live drums">Электрогитара и барабаны</option><option value="accordion, expressive violin">Аккордеон и скрипка</option><option value="orchestral strings, cinematic percussion">Оркестровые</option></select></div>
+<div><label for="mood">Настроение</label><select id="mood"><option value="romantic, heartfelt">Романтичное</option><option value="nostalgic, warm">Ностальгическое</option><option value="uplifting, hopeful">Светлое, с надеждой</option><option value="energetic, euphoric">Энергичное</option><option value="dramatic, intimate">Драматичное</option><option value="playful, joyful">Радостное</option></select></div>
+<div><label for="voice">Вокал</label><select id="voice"><option value="expressive female lead vocals">Женский</option><option value="warm male lead vocals">Мужской</option><option value="male and female duet vocals">Дуэт</option><option value="instrumental, no vocals">Инструментал</option></select></div>
+<div><label for="bpm">Темп BPM</label><input id="bpm" type="number" min="50" max="200" value="115"></div></div>
+<label for="energy">Развитие композиции</label><select id="energy"><option value="gentle intro, gradual build, memorable chorus, emotional final chorus">Плавное развитие</option><option value="short intro, rhythmic verses, tension build, explosive chorus drop, dynamic breaks">Танцевальная драматургия</option><option value="intimate intro, restrained verses, dramatic bridge, powerful final chorus">Драматическая кульминация</option></select>
+<label><input type="checkbox" id="tag" checked style="width:auto"> Добавить фирменный звуковой тег Yanis Music (необязательно)</label>
+<p id="warning" role="status"></p><label for="output">Готовый промпт Suno</label><textarea id="output" readonly></textarea><small id="count"></small><button id="copy">Копировать промпт</button><button id="save">Сохранить текстовый файл</button></section>
+<p><a href="https://suno.com/create" target="_blank" rel="noopener noreferrer">Открыть Suno</a></p>
+<script>
+const ids=['genre','fusion','inst','mood','voice','bpm','energy','tag'];const el=id=>document.getElementById(id);
+function build(){
+let bpm=Number(el('bpm').value),warning=[];
+if(!Number.isFinite(bpm)||bpm<50||bpm>200){warning.push('Введите BPM от 50 до 200.');bpm=115}
+const a=el('genre').value,b=el('fusion').value;
+if(a===b)warning.push('Оба жанра совпадают — второй стиль не добавлен.');
+if(b&&a!==b&&((a==='Jersey club'&&b==='Acoustic folk')||(b==='Jersey club'&&a==='Acoustic folk')))warning.push('Сочетание Jersey Club и акустического фолка экспериментальное.');
+if(a==='Jersey club'&&bpm<115)warning.push('Для Jersey Club такой темп нетипичен; проверьте результат на слух.');
+const parts=[a];if(b&&b!==a)parts.push(b);parts.push(el('inst').value,el('mood').value,el('voice').value,bpm+' BPM',el('energy').value,'clear arrangement, polished mix');if(el('tag').checked)parts.push('short spoken Yanis Music tag at intro and outro');
+el('output').value=parts.join(', ')+'.';el('warning').textContent=warning.join(' ');el('count').textContent=el('output').value.length+' символов / ориентир 1000';
+}
+ids.forEach(id=>el(id).addEventListener('input',build));
+el('copy').onclick=async()=>{try{await navigator.clipboard.writeText(el('output').value);el('copy').textContent='Скопировано ✓'}catch(e){el('output').focus();el('output').select();el('copy').textContent='Выделено — скопируйте вручную'}setTimeout(()=>el('copy').textContent='Копировать промпт',2200)};
+el('save').onclick=()=>{const url=URL.createObjectURL(new Blob([el('output').value],{type:'text/plain;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='alenta-suno-prompt.txt';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
+build();
+</script></body></html>
