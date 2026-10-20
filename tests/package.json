@@ -1,0 +1,13 @@
+{
+  "name": "alenta-suno-builder-tests",
+  "private": true,
+  "scripts": {
+    "test": "node --test suno-builder-v2.test.cjs"
+  },
+  "devDependencies": {
+    "jsdom": "26.1.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
